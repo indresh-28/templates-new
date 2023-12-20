@@ -17,10 +17,6 @@ spec:
   destination:
     server: {{ $.Values.destination.server }}
     namespace: argo-cd
-  syncPolicy:
-    automated:
-      prune: {{ $.Values.syncPolicy.automated.prune }}
-      selfHeal: {{ $.Values.syncPolicy.automated.selfHeal }}
 --- 
 {{- end }}
 {{- end }}
