@@ -14,3 +14,6 @@ syncPolicy:
     selfHeal: true
 
 tektonPath: cicd/tekton-pipelines
+
+tektonPipelines:
+  - name: test
