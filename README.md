@@ -12,7 +12,7 @@ Repo to manage Capten Stack Templates.
       * [charts/](./capten-templates/cicd/tekton/argocd-apps/charts)
       * [templates/](./capten-templates/cicd/tekton/argocd-apps/templates)
         * [configs/](./capten-templates/cicd/tekton/argocd-apps/templates/configs)
-        * [pipelines/](./capten-templates/cicd/tekton/argocd-apps/templates/pipelines)
+        * [pipelines/](./capten-templates/cicd/tekton/argocd-apps/templates/pipelines
       * [Chart.yaml](./capten-templates/cicd/tekton/argocd-apps/Chart.yaml)
       * [values.yaml](./capten-templates/cicd/tekton/argocd-apps/values.yaml)
     * [tekton-pipelines/](./capten-templates/cicd/tekton/tekton-pipelines)
