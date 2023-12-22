@@ -1,5 +1,5 @@
 # capten-templates
-Repo to manage Capten Stack Templates.
+Repo to manage Capten Stack Templates
 
 # capten-templates
 
