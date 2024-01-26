@@ -4,7 +4,7 @@ global:
   clusterConfigPath: infra/clusters/cluster-configs
 
 source:
-  repoURL: https://github.com/intelops/capten-templates.git
+  repoURL: https://github.com/indresh-28/templates-new.git
   targetRevision: main
   
 destination:
