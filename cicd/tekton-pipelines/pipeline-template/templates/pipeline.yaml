@@ -94,7 +94,7 @@ spec:
     runAfter: ["build"]
     taskRef:
       name: deploy
-      kind: Task
+      kind: ClusterTask
     params:
     - name: NAME
       value: $(params.NAME)
