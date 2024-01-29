@@ -46,7 +46,7 @@ spec:
   - apiVersion: tekton.dev/v1beta1
     kind: PipelineRun
     metadata:
-      Name: trigger-$(tt.params.id)
+      name: trigger-$(tt.params.id)
     spec:
       serviceAccountName: {{ $.Values.pipelineName }}
       pipelineRef:
