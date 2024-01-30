@@ -37,21 +37,24 @@ spec:
   steps:
   
   - name: clone-repo
-    image: ghcr.io/kube-tarian/helmrepo-supporting-tools/git:v2.26.2
+    image: alpine/git:v2.26.2
     script: |
       echo "Cloning the repository..."
+      export GIT_USERNAME=`cat /workspace/basic-auth/GIT_USER_NAME`
+      export GIT_TOKEN=`cat /workspace/basic-auth/GIT_TOKEN`
       export gitProjectUrl=`cat /workspace/basic-auth/GIT_PROJECT_URL`
-      git clone $gitProjectUrl /workspace/source
+
+      git clone https://${GIT_USERNAME}:${GIT_TOKEN}@${gitProjectUrl} /workspace/source
 
   - name: update-yaml
-    image: ghcr.io/kube-tarian/helmrepo-supporting-tools/git:v2.26.2
+    image: alpine/git:v2.26.2
     workingDir: "/workspace/source"
     script: |
       #!/usr/bin/env sh
       set -e
      
       export DIRECTORY=`cat /workspace/basic-auth/APP_CONFIG_PATH`
-      VALUES_FILE="${DIRECTORY}/$(inputs.params.NAME)-values.yaml"
+      VALUES_FILE="${DIRECTORY}/values/$(inputs.params.NAME)-values.yaml"
 
       echo "updating image tag to $(inputs.params.ImageTag)"
       sed -i "s#$(inputs.params.IMAGE):[a-zA-Z0-9]\\+#$(inputs.params.IMAGE):$(inputs.params.ImageTag)#" "$VALUES_FILE"
@@ -60,7 +63,7 @@ spec:
       sed -E -i "s#(tag:)\s*\"?[^\"]*\"?#\1 \"$(inputs.params.ImageTag)\"#" "$VALUES_FILE"
 
   - name: commit-push-changes-gitops
-    image: ghcr.io/kube-tarian/helmrepo-supporting-tools/git:v2.26.2
+    image: alpine/git:v2.26.2
     env:
     - name: USER_EMAIL
       value: $(params.userEmail)
@@ -79,7 +82,7 @@ spec:
       git push origin main
 
   - name: wait-for-argocd-rollout
-    image: ghcr.io/kube-tarian/helmrepo-supporting-tools/argocd:v2.6.15
+    image: argoproj/argocd:v2.6.15
     script: |
       #!/usr/bin/env sh
       set -e
@@ -89,12 +92,12 @@ spec:
       export USERNAME=`cat /workspace/argo-auth/USERNAME`
       export PASSWORD=`cat /workspace/argo-auth/PASSWORD`
 
-      argocd login $ARGOCD_SERVER --username $USERNAME --password $PASSWORD --insecure
-      argocd app sync ${ARGOCD_APP_NAME}-$(inputs.params.NAME) --insecure
-      argocd app wait ${ARGOCD_APP_NAME}-$(inputs.params.NAME) --sync --health --operation --insecure
+      argocd login argo.azureagent.optimizor.app --username $USERNAME --password $PASSWORD --insecure
+      argocd app sync ${ARGOCD_APP_NAME}-$(inputs.params.NAME) --insecure --server argo.azureagent.optimizor.app
+      argocd app wait ${ARGOCD_APP_NAME}-$(inputs.params.NAME) --sync --health --operation --insecure --server argo.azureagent.optimizor.app
 
   - name: check-argocd-status
-    image: ghcr.io/kube-tarian/helmrepo-supporting-tools/argocd:v2.6.15
+    image: argoproj/argocd:v2.6.15
     script: |
       #!/usr/bin/env sh
       set -e
@@ -104,7 +107,7 @@ spec:
       export USERNAME=`cat /workspace/argo-auth/USERNAME`
       export PASSWORD=`cat /workspace/argo-auth/PASSWORD`
 
-      argocd login $ARGOCD_SERVER --username $USERNAME --password $PASSWORD --insecure
+      argocd login argo.azureagent.optimizor.app --username $USERNAME --password $PASSWORD --insecure
       sync_status=$(argocd app get ${ARGOCD_APP_NAME}-$(inputs.params.NAME) | awk '/Sync Status:/ {print $3}')
       echo "Sync Status: $sync_status"
       if [ "$sync_status" = "Synced" ]; then
