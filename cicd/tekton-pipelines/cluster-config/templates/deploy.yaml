@@ -37,7 +37,7 @@ spec:
   steps:
   
   - name: clone-repo
-    image: alpine/git:v2.26.2
+    image: ghcr.io/kube-tarian/helmrepo-supporting-tools/git:v2.26.2
     script: |
       echo "Cloning the repository..."
       export GIT_USERNAME=`cat /workspace/basic-auth/GIT_USER_NAME`
@@ -47,7 +47,7 @@ spec:
       git clone https://${GIT_USERNAME}:${GIT_TOKEN}@${gitProjectUrl} /workspace/source
 
   - name: update-yaml
-    image: alpine/git:v2.26.2
+    image: ghcr.io/kube-tarian/helmrepo-supporting-tools/git:v2.26.2
     workingDir: "/workspace/source"
     script: |
       #!/usr/bin/env sh
@@ -63,7 +63,7 @@ spec:
       sed -E -i "s#(tag:)\s*\"?[^\"]*\"?#\1 \"$(inputs.params.ImageTag)\"#" "$VALUES_FILE"
 
   - name: commit-push-changes-gitops
-    image: alpine/git:v2.26.2
+    image: ghcr.io/kube-tarian/helmrepo-supporting-tools/git:v2.26.2
     env:
     - name: USER_EMAIL
       value: $(params.userEmail)
@@ -82,7 +82,7 @@ spec:
       git push origin main
 
   - name: wait-for-argocd-rollout
-    image: argoproj/argocd:v2.6.15
+    image: ghcr.io/kube-tarian/helmrepo-supporting-tools/argocd:v2.6.15
     script: |
       #!/usr/bin/env sh
       set -e
@@ -97,7 +97,7 @@ spec:
       argocd app wait ${ARGOCD_APP_NAME}-$(inputs.params.NAME) --sync --health --operation --insecure --server argo.azureagent.optimizor.app
 
   - name: check-argocd-status
-    image: argoproj/argocd:v2.6.15
+    image: ghcr.io/kube-tarian/helmrepo-supporting-tools/argocd:v2.6.15
     script: |
       #!/usr/bin/env sh
       set -e
