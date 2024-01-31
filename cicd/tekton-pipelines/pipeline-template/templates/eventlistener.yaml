@@ -101,8 +101,6 @@ spec:
           value: ghcr.io/$(body.repository.full_name)  
         - name: REPONAME
           value: $(body.repository.full_name)
-        - name: EMAIL
-          value: $(body.repository.owner.email)
         - name: id
           value: $(header.X-GitHub-Delivery)
         - name: NAME
